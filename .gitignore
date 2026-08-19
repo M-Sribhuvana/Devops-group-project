@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+frontend/dist/
+build/
+
+# Environment and sensitive keys
+.env
+*.env
+backend/.env
+API_KEYS.txt
+*.key
+*.pem
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+*.h5
+*.tflite
+*.pt
+*.pth
+
+# IDE and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log
