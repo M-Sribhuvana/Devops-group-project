@@ -30,6 +30,9 @@ ENV/
 *.tflite
 *.pt
 *.pth
+# AI model training data and artifacts
+ai_model_training/dataset/
+ai_model_training/checkpoints/
 
 # IDE and OS
 .vscode/
@@ -37,6 +40,3 @@ ENV/
 .DS_Store
 Thumbs.db
 *.log
-# AI model training data and artifacts
-ai_model_training/dataset/
-ai_model_training/checkpoints/
