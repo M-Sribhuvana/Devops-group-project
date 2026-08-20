@@ -376,7 +376,514 @@ FRUIT_DISEASE_DB = {
         "prevention": ["Psyllid monitoring sticky traps."],
         "recommended_irrigation": "Regular deep watering.",
         "npk_fertilizer_tip": "High Nitrogen & Iron for evergreen leaves."
-    }
+    },
+        # ========================================================
+    # CORN
+    # ========================================================
+
+    "corn_cercospora_leaf_spot": {
+        "id": "corn_cercospora_leaf_spot",
+        "display_name": "Corn Cercospora Leaf Spot",
+        "crop_type": "Corn (Zea mays)",
+        "scientific_name": "Cercospora zeae-maydis",
+        "status": "Diseased",
+        "severity": "Medium",
+        "description": "Fungal leaf disease producing gray to tan rectangular lesions that can reduce photosynthetic activity.",
+        "symptoms": [
+            "Long gray or tan lesions on leaves.",
+            "Lesions often develop parallel to leaf veins.",
+            "Premature leaf drying in severe infections."
+        ],
+        "organic_remedies": [
+            "Remove severely infected plant debris.",
+            "Improve field airflow and avoid excessive leaf wetness."
+        ],
+        "chemical_treatments": [
+            "Use an approved corn fungicide when disease pressure is high."
+        ],
+        "prevention": [
+            "Use resistant hybrids.",
+            "Practice crop rotation.",
+            "Manage infected crop residue."
+        ],
+        "recommended_irrigation": "Avoid excessive overhead irrigation.",
+        "npk_fertilizer_tip": "Maintain balanced nitrogen and potassium nutrition."
+    },
+
+
+    "corn_common_rust": {
+        "id": "corn_common_rust",
+        "display_name": "Corn Common Rust",
+        "crop_type": "Corn (Zea mays)",
+        "scientific_name": "Puccinia sorghi",
+        "status": "Diseased",
+        "severity": "Medium",
+        "description": "Fungal rust disease producing reddish-brown pustules on corn leaves.",
+        "symptoms": [
+            "Small reddish-brown rust pustules.",
+            "Pustules occur on both leaf surfaces.",
+            "Severe infections can cause premature leaf senescence."
+        ],
+        "organic_remedies": [
+            "Remove heavily infected plant debris.",
+            "Maintain good field airflow."
+        ],
+        "chemical_treatments": [
+            "Use an approved fungicide when economically justified."
+        ],
+        "prevention": [
+            "Plant resistant corn hybrids.",
+            "Use crop rotation."
+        ],
+        "recommended_irrigation": "Use efficient irrigation and avoid prolonged leaf wetness.",
+        "npk_fertilizer_tip": "Maintain balanced NPK nutrition."
+    },
+
+
+    "corn_northern_leaf_blight": {
+        "id": "corn_northern_leaf_blight",
+        "display_name": "Corn Northern Leaf Blight",
+        "crop_type": "Corn (Zea mays)",
+        "scientific_name": "Exserohilum turcicum",
+        "status": "Diseased",
+        "severity": "High",
+        "description": "Fungal disease producing characteristic elongated gray-green to tan lesions on corn leaves.",
+        "symptoms": [
+            "Long cigar-shaped lesions.",
+            "Gray-green lesions becoming tan or brown.",
+            "Severe disease causes major leaf area loss."
+        ],
+        "organic_remedies": [
+            "Remove or properly manage infected crop residue.",
+            "Improve field sanitation."
+        ],
+        "chemical_treatments": [
+            "Apply an approved fungicide according to local agricultural guidance."
+        ],
+        "prevention": [
+            "Use resistant hybrids.",
+            "Rotate crops.",
+            "Manage crop residue."
+        ],
+        "recommended_irrigation": "Avoid unnecessary overhead irrigation.",
+        "npk_fertilizer_tip": "Maintain balanced nitrogen and potassium."
+    },
+
+
+    "corn_healthy": {
+        "id": "corn_healthy",
+        "display_name": "Corn - Healthy Leaf",
+        "crop_type": "Corn (Zea mays)",
+        "scientific_name": "N/A",
+        "status": "Healthy",
+        "severity": "None",
+        "description": "Healthy green corn foliage without visible disease lesions.",
+        "symptoms": [
+            "No significant disease symptoms detected."
+        ],
+        "organic_remedies": [
+            "Continue good crop management practices."
+        ],
+        "chemical_treatments": [
+            "No treatment required."
+        ],
+        "prevention": [
+            "Monitor leaves regularly.",
+            "Maintain proper field sanitation."
+        ],
+        "recommended_irrigation": "Regular irrigation according to crop growth stage and weather.",
+        "npk_fertilizer_tip": "Maintain balanced NPK nutrition."
+    },
+
+
+    # ========================================================
+    # POTATO
+    # ========================================================
+
+    "potato_early_blight": {
+        "id": "potato_early_blight",
+        "display_name": "Potato Early Blight",
+        "crop_type": "Potato (Solanum tuberosum)",
+        "scientific_name": "Alternaria solani",
+        "status": "Diseased",
+        "severity": "High",
+        "description": "Fungal disease producing dark concentric lesions on potato leaves.",
+        "symptoms": [
+            "Dark brown circular leaf spots.",
+            "Concentric ring patterns resembling a target.",
+            "Yellowing around older lesions."
+        ],
+        "organic_remedies": [
+            "Remove severely infected foliage.",
+            "Improve field sanitation."
+        ],
+        "chemical_treatments": [
+            "Use an approved fungicide according to local recommendations."
+        ],
+        "prevention": [
+            "Use crop rotation.",
+            "Avoid prolonged leaf wetness.",
+            "Remove infected crop debris."
+        ],
+        "recommended_irrigation": "Prefer drip irrigation where practical.",
+        "npk_fertilizer_tip": "Avoid excessive nitrogen and maintain adequate potassium."
+    },
+
+
+    "potato_late_blight": {
+        "id": "potato_late_blight",
+        "display_name": "Potato Late Blight",
+        "crop_type": "Potato (Solanum tuberosum)",
+        "scientific_name": "Phytophthora infestans",
+        "status": "Diseased",
+        "severity": "Critical",
+        "description": "Highly destructive disease causing rapidly expanding dark lesions on potato leaves.",
+        "symptoms": [
+            "Irregular dark brown or black leaf lesions.",
+            "Rapid leaf tissue collapse.",
+            "White fungal growth may appear under humid conditions."
+        ],
+        "organic_remedies": [
+            "Remove severely infected plant material.",
+            "Avoid prolonged leaf wetness."
+        ],
+        "chemical_treatments": [
+            "Use locally approved late-blight fungicides according to label directions."
+        ],
+        "prevention": [
+            "Use certified disease-free seed.",
+            "Remove volunteer potato plants.",
+            "Monitor crops during cool and humid weather."
+        ],
+        "recommended_irrigation": "Prefer drip irrigation and avoid unnecessary overhead watering.",
+        "npk_fertilizer_tip": "Maintain balanced nutrition and avoid excessive nitrogen."
+    },
+
+
+    "potato_healthy": {
+        "id": "potato_healthy",
+        "display_name": "Potato - Healthy Leaf",
+        "crop_type": "Potato (Solanum tuberosum)",
+        "scientific_name": "N/A",
+        "status": "Healthy",
+        "severity": "None",
+        "description": "Healthy green potato foliage without significant visible disease symptoms.",
+        "symptoms": [
+            "Leaves appear green and intact.",
+            "No significant lesions detected."
+        ],
+        "organic_remedies": [
+            "Continue normal crop care."
+        ],
+        "chemical_treatments": [
+            "No treatment required."
+        ],
+        "prevention": [
+            "Regularly inspect plants.",
+            "Use clean planting material."
+        ],
+        "recommended_irrigation": "Consistent irrigation according to soil and weather conditions.",
+        "npk_fertilizer_tip": "Maintain balanced NPK nutrition."
+    },
+
+
+    # ========================================================
+    # TOMATO
+    # ========================================================
+
+    "tomato_bacterial_spot": {
+        "id": "tomato_bacterial_spot",
+        "display_name": "Tomato Bacterial Spot",
+        "crop_type": "Tomato (Solanum lycopersicum)",
+        "scientific_name": "Xanthomonas spp.",
+        "status": "Diseased",
+        "severity": "High",
+        "description": "Bacterial disease causing small dark spots on tomato leaves and fruit.",
+        "symptoms": [
+            "Small dark leaf spots.",
+            "Yellow halos may surround lesions.",
+            "Fruit can develop raised dark spots."
+        ],
+        "organic_remedies": [
+            "Remove heavily infected plant material.",
+            "Avoid working with plants when foliage is wet."
+        ],
+        "chemical_treatments": [
+            "Use approved copper-based products according to label directions."
+        ],
+        "prevention": [
+            "Use disease-free seed and transplants.",
+            "Avoid overhead irrigation."
+        ],
+        "recommended_irrigation": "Drip irrigation.",
+        "npk_fertilizer_tip": "Maintain balanced plant nutrition."
+    },
+
+
+    "tomato_early_blight": {
+        "id": "tomato_early_blight",
+        "display_name": "Tomato Early Blight",
+        "crop_type": "Tomato (Solanum lycopersicum)",
+        "scientific_name": "Alternaria solani",
+        "status": "Diseased",
+        "severity": "High",
+        "description": "Fungal disease producing dark concentric-ring lesions on tomato leaves.",
+        "symptoms": [
+            "Dark circular lesions.",
+            "Concentric ring patterns.",
+            "Yellowing around infected tissue."
+        ],
+        "organic_remedies": [
+            "Remove infected lower leaves.",
+            "Improve airflow around plants."
+        ],
+        "chemical_treatments": [
+            "Use an approved fungicide according to local recommendations."
+        ],
+        "prevention": [
+            "Rotate crops.",
+            "Remove infected plant debris.",
+            "Avoid overhead irrigation."
+        ],
+        "recommended_irrigation": "Drip irrigation.",
+        "npk_fertilizer_tip": "Maintain balanced NPK nutrition."
+    },
+
+
+    "tomato_late_blight": {
+        "id": "tomato_late_blight",
+        "display_name": "Tomato Late Blight",
+        "crop_type": "Tomato (Solanum lycopersicum)",
+        "scientific_name": "Phytophthora infestans",
+        "status": "Diseased",
+        "severity": "Critical",
+        "description": "Rapidly developing disease that produces dark water-soaked lesions on tomato leaves.",
+        "symptoms": [
+            "Dark irregular leaf lesions.",
+            "Water-soaked appearance.",
+            "Rapid tissue collapse under favorable conditions."
+        ],
+        "organic_remedies": [
+            "Remove infected plant material.",
+            "Keep foliage as dry as practical."
+        ],
+        "chemical_treatments": [
+            "Use locally approved late-blight fungicides according to label directions."
+        ],
+        "prevention": [
+            "Avoid prolonged leaf wetness.",
+            "Remove infected debris.",
+            "Monitor during cool humid weather."
+        ],
+        "recommended_irrigation": "Drip irrigation.",
+        "npk_fertilizer_tip": "Maintain balanced nutrition."
+    },
+
+
+    "tomato_leaf_mold": {
+        "id": "tomato_leaf_mold",
+        "display_name": "Tomato Leaf Mold",
+        "crop_type": "Tomato (Solanum lycopersicum)",
+        "scientific_name": "Passalora fulva",
+        "status": "Diseased",
+        "severity": "Medium",
+        "description": "Fungal disease commonly associated with high humidity and poor air circulation.",
+        "symptoms": [
+            "Yellow patches on upper leaf surfaces.",
+            "Olive-green to brown fungal growth underneath leaves.",
+            "Leaves may curl and drop."
+        ],
+        "organic_remedies": [
+            "Improve ventilation.",
+            "Remove severely infected leaves."
+        ],
+        "chemical_treatments": [
+            "Use an approved fungicide when necessary."
+        ],
+        "prevention": [
+            "Maintain good greenhouse ventilation.",
+            "Avoid excessive humidity.",
+            "Use resistant varieties when available."
+        ],
+        "recommended_irrigation": "Drip irrigation.",
+        "npk_fertilizer_tip": "Avoid excessive nitrogen."
+    },
+
+
+    "tomato_septoria_leaf_spot": {
+        "id": "tomato_septoria_leaf_spot",
+        "display_name": "Tomato Septoria Leaf Spot",
+        "crop_type": "Tomato (Solanum lycopersicum)",
+        "scientific_name": "Septoria lycopersici",
+        "status": "Diseased",
+        "severity": "Medium",
+        "description": "Fungal leaf spot disease characterized by numerous small circular lesions.",
+        "symptoms": [
+            "Small circular spots with dark margins.",
+            "Tiny dark structures inside lesions.",
+            "Progressive yellowing and leaf drop."
+        ],
+        "organic_remedies": [
+            "Remove infected lower leaves.",
+            "Improve plant airflow."
+        ],
+        "chemical_treatments": [
+            "Use an approved fungicide according to label directions."
+        ],
+        "prevention": [
+            "Remove infected debris.",
+            "Avoid overhead irrigation.",
+            "Use crop rotation."
+        ],
+        "recommended_irrigation": "Drip irrigation.",
+        "npk_fertilizer_tip": "Maintain balanced nutrition."
+    },
+
+
+    "tomato_spider_mites": {
+        "id": "tomato_spider_mites",
+        "display_name": "Tomato Spider Mites",
+        "crop_type": "Tomato (Solanum lycopersicum)",
+        "scientific_name": "Tetranychus spp.",
+        "status": "Diseased",
+        "severity": "Medium",
+        "description": "Spider mite infestation causing stippling, yellowing and weakening of tomato leaves.",
+        "symptoms": [
+            "Fine yellow or pale stippling.",
+            "Bronzing of leaves.",
+            "Fine webbing may appear during heavy infestations."
+        ],
+        "organic_remedies": [
+            "Use strong water sprays to dislodge mites.",
+            "Encourage beneficial predatory mites."
+        ],
+        "chemical_treatments": [
+            "Use an approved miticide when necessary."
+        ],
+        "prevention": [
+            "Monitor leaf undersides regularly.",
+            "Avoid excessive plant stress."
+        ],
+        "recommended_irrigation": "Maintain consistent irrigation.",
+        "npk_fertilizer_tip": "Avoid excessive nitrogen."
+    },
+
+
+    "tomato_target_spot": {
+        "id": "tomato_target_spot",
+        "display_name": "Tomato Target Spot",
+        "crop_type": "Tomato (Solanum lycopersicum)",
+        "scientific_name": "Corynespora cassiicola",
+        "status": "Diseased",
+        "severity": "Medium",
+        "description": "Fungal disease producing circular target-like lesions on tomato leaves and fruit.",
+        "symptoms": [
+            "Circular brown lesions.",
+            "Concentric target-like rings.",
+            "Leaf yellowing and premature drop."
+        ],
+        "organic_remedies": [
+            "Remove infected foliage.",
+            "Improve airflow."
+        ],
+        "chemical_treatments": [
+            "Use an approved fungicide according to local guidance."
+        ],
+        "prevention": [
+            "Avoid prolonged leaf wetness.",
+            "Remove infected crop residue."
+        ],
+        "recommended_irrigation": "Drip irrigation.",
+        "npk_fertilizer_tip": "Maintain balanced nutrition."
+    },
+
+
+    "tomato_yellow_leaf_curl_virus": {
+        "id": "tomato_yellow_leaf_curl_virus",
+        "display_name": "Tomato Yellow Leaf Curl Virus",
+        "crop_type": "Tomato (Solanum lycopersicum)",
+        "scientific_name": "Tomato yellow leaf curl virus",
+        "status": "Diseased",
+        "severity": "Critical",
+        "description": "Viral disease causing severe leaf curling, yellowing and plant stunting, commonly transmitted by whiteflies.",
+        "symptoms": [
+            "Upward curling of leaves.",
+            "Yellowing around leaf margins.",
+            "Severe plant stunting."
+        ],
+        "organic_remedies": [
+            "Remove severely infected plants.",
+            "Use insect-exclusion practices to reduce whiteflies."
+        ],
+        "chemical_treatments": [
+            "Manage whitefly vectors using locally approved products."
+        ],
+        "prevention": [
+            "Use virus-free transplants.",
+            "Control whitefly populations.",
+            "Remove infected plants promptly."
+        ],
+        "recommended_irrigation": "Consistent drip irrigation.",
+        "npk_fertilizer_tip": "Maintain balanced nutrition."
+    },
+
+
+    "tomato_mosaic_virus": {
+        "id": "tomato_mosaic_virus",
+        "display_name": "Tomato Mosaic Virus",
+        "crop_type": "Tomato (Solanum lycopersicum)",
+        "scientific_name": "Tomato mosaic virus",
+        "status": "Diseased",
+        "severity": "High",
+        "description": "Viral disease causing characteristic mosaic patterns, leaf distortion and reduced plant growth.",
+        "symptoms": [
+            "Light and dark green mosaic patterns.",
+            "Leaf distortion.",
+            "Reduced plant growth."
+        ],
+        "organic_remedies": [
+            "Remove infected plants.",
+            "Disinfect tools after handling infected plants."
+        ],
+        "chemical_treatments": [
+            "There is no curative chemical treatment for an infected plant."
+        ],
+        "prevention": [
+            "Use certified disease-free seed.",
+            "Disinfect tools.",
+            "Avoid handling plants when hands are contaminated."
+        ],
+        "recommended_irrigation": "Regular irrigation according to crop requirements.",
+        "npk_fertilizer_tip": "Maintain balanced nutrition."
+    },
+
+
+    "tomato_healthy": {
+        "id": "tomato_healthy",
+        "display_name": "Tomato - Healthy Leaf",
+        "crop_type": "Tomato (Solanum lycopersicum)",
+        "scientific_name": "N/A",
+        "status": "Healthy",
+        "severity": "None",
+        "description": "Healthy tomato foliage with normal green coloration and no significant visible disease symptoms.",
+        "symptoms": [
+            "Green leaves.",
+            "No significant disease lesions.",
+            "Normal leaf structure."
+        ],
+        "organic_remedies": [
+            "Continue good crop management."
+        ],
+        "chemical_treatments": [
+            "No treatment required."
+        ],
+        "prevention": [
+            "Inspect plants regularly.",
+            "Maintain field sanitation."
+        ],
+        "recommended_irrigation": "Regular drip irrigation.",
+        "npk_fertilizer_tip": "Maintain balanced NPK nutrition."
+    },
 }
 
 def get_disease_by_id(disease_id: str):

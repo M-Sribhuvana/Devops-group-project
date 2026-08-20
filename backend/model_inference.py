@@ -1,229 +1,415 @@
 """
-Fruit Crop Disease Classifier (Computer Vision Model & Inference Engine)
-Uses MobileNetV2 architecture with image preprocessing and intelligent visual feature inspection.
+MobileNetV2 inference engine for the trained 25-class PlantVillage model.
 """
 
-import os
+from __future__ import annotations
+
 import io
-import math
-import numpy as np
+import os
+
+import torch
+import torch.nn as nn
 from PIL import Image
-from fruit_diseases_db import FRUIT_DISEASE_DB, get_disease_by_id
-MODEL_PATH = os.path.join(
-    os.path.dirname(__file__),
-    "..",
-    "ai_model_training",
-    "checkpoints",
-    "crop_health_mobilenetv2.pth",
+from torchvision import models, transforms
+
+from fruit_diseases_db import get_disease_by_id
+
+
+# ============================================================
+# MODEL PATH
+# ============================================================
+
+MODEL_PATH = os.path.abspath(
+    os.path.join(
+        os.path.dirname(__file__),
+        "..",
+        "ai_model_training",
+        "checkpoints",
+        "crop_health_mobilenetv2.pth",
+    )
 )
-MODEL_PATH = os.path.abspath(MODEL_PATH)
 
-# Target input dimensions for MobileNetV2 model
-TARGET_IMAGE_SIZE = (224, 224)
+TARGET_IMAGE_SIZE = 224
 
-# List of supported fruit disease target classes
-CLASS_NAMES = [
-    "apple_scab",
-    "apple_black_rot",
-    "apple_cedar_rust",
-    "apple_healthy",
-    "grape_black_rot",
-    "grape_esca",
-    "grape_leaf_blight",
-    "grape_healthy",
-    "peach_bacterial_spot",
-    "peach_healthy",
-    "strawberry_leaf_scorch",
-    "strawberry_healthy",
-    "cherry_powdery_mildew",
-    "cherry_healthy",
-    "citrus_greening",
-    "citrus_healthy"
-]
 
-class FruitCropClassifier:
-    def __init__(self, model_path: str = None):
-        self.model_path = model_path or "fruit_disease_mobilenetv2.pth"
-        self.torch_model = None
+# ============================================================
+# CLASSIFIER
+# ============================================================
+
+class CropDiseaseClassifier:
+
+    def __init__(self, model_path: str = MODEL_PATH):
+
+        self.model_path = model_path
+        self.model = None
+        self.classes = []
+        self.class_to_idx = {}
         self.is_trained_model_loaded = False
-        self._initialize_model()
 
-    def _initialize_model(self):
-        """Attempt to load trained PyTorch or TensorFlow model if weights exist."""
-        if os.path.exists(self.model_path):
-            try:
-                import torch
-                import torchvision.models as models
-                import torch.nn as nn
+        # Same preprocessing used during validation/test
+        self.transform = transforms.Compose([
+            transforms.Resize(256),
+            transforms.CenterCrop(224),
+            transforms.ToTensor(),
+            transforms.Normalize(
+                [0.485, 0.456, 0.406],
+                [0.229, 0.224, 0.225],
+            ),
+        ])
 
-                # Reconstruct MobileNetV2 architecture
-                model = models.mobilenet_v2(pretrained=False)
-                model.classifier[1] = nn.Linear(model.last_channel, len(CLASS_NAMES))
-                model.load_state_dict(torch.load(self.model_path, map_location=torch.device('cpu')))
-                model.eval()
-                self.torch_model = model
-                self.is_trained_model_loaded = True
-                print(f"[AI Model] Successfully loaded trained weights from {self.model_path}")
-            except Exception as e:
-                print(f"[AI Model] PyTorch model load skipped ({e}). Using feature analyzer engine.")
-        else:
-            print(f"[AI Model] No custom weights found at {self.model_path}. Visual feature analyzer active.")
+        self._load_model()
 
-    def preprocess_image(self, image_bytes: bytes) -> tuple[Image.Image, np.ndarray]:
-        """Convert raw bytes to PIL Image and NumPy array normalized to 224x224 RGB."""
-        img = Image.open(io.BytesIO(image_bytes)).convert('RGB')
-        resized_img = img.resize(TARGET_IMAGE_SIZE, Image.Resampling.BILINEAR)
-        img_array = np.array(resized_img, dtype=np.float32) / 255.0
-        return img, img_array
+    # ========================================================
+    # LOAD MODEL
+    # ========================================================
 
-    def analyze_visual_features(self, img: Image.Image, img_array: np.ndarray, filename: str = "") -> str:
-        """
-        Extract visual feature representations (HSV color space, spot density, brown/yellow ratio)
-        to identify the fruit leaf pathology when no custom .pth is loaded.
-        """
-        # Convert RGB array to HSV (Hue, Saturation, Value)
-        # H: 0-1, S: 0-1, V: 0-1
-        r, g, b = img_array[:,:,0], img_array[:,:,1], img_array[:,:,2]
-        
-        # Mean color channels
-        mean_r = np.mean(r)
-        mean_g = np.mean(g)
-        mean_b = np.mean(b)
+    def _load_model(self):
 
-        # Greenness index
-        green_ratio = mean_g / (mean_r + mean_b + 1e-6)
-        # Redness / Brownness index
-        red_ratio = mean_r / (mean_g + mean_b + 1e-6)
-        
-        # Dark spot ratio (pixels where brightness is low or high variance)
-        dark_pixels = np.sum((r < 0.3) & (g < 0.3) & (b < 0.3)) / (224 * 224)
-        yellow_pixels = np.sum((r > 0.5) & (g > 0.5) & (b < 0.3)) / (224 * 224)
-        orange_pixels = np.sum((r > 0.6) & (g > 0.3) & (b < 0.1)) / (224 * 224)
-        white_powdery_pixels = np.sum((r > 0.75) & (g > 0.75) & (b > 0.75)) / (224 * 224)
+        if not os.path.exists(self.model_path):
 
-        # Check filename hints for demo testing
-        fn_lower = filename.lower()
-        if "apple" in fn_lower:
-            if "scab" in fn_lower or dark_pixels > 0.08:
-                return "apple_scab"
-            elif "black" in fn_lower or "rot" in fn_lower:
-                return "apple_black_rot"
-            elif "rust" in fn_lower or orange_pixels > 0.05:
-                return "apple_cedar_rust"
-            elif "healthy" in fn_lower or green_ratio > 0.55:
-                return "apple_healthy"
-            return "apple_scab"
+            print(
+                f"[AI Model] Model not found: "
+                f"{self.model_path}"
+            )
 
-        if "grape" in fn_lower:
-            if "rot" in fn_lower:
-                return "grape_black_rot"
-            elif "esca" in fn_lower or yellow_pixels > 0.08:
-                return "grape_esca"
-            elif "blight" in fn_lower:
-                return "grape_leaf_blight"
-            elif "healthy" in fn_lower or green_ratio > 0.55:
-                return "grape_healthy"
-            return "grape_black_rot"
+            return
 
-        if "peach" in fn_lower:
-            if "bacterial" in fn_lower or "spot" in fn_lower or dark_pixels > 0.04:
-                return "peach_bacterial_spot"
-            return "peach_healthy"
+        try:
 
-        if "strawberry" in fn_lower:
-            if "scorch" in fn_lower or red_ratio > 0.45:
-                return "strawberry_leaf_scorch"
-            return "strawberry_healthy"
+            print(
+                f"[AI Model] Loading model from: "
+                f"{self.model_path}"
+            )
 
-        if "cherry" in fn_lower:
-            if "mildew" in fn_lower or white_powdery_pixels > 0.06:
-                return "cherry_powdery_mildew"
-            return "cherry_healthy"
+            checkpoint = torch.load(
+                self.model_path,
+                map_location="cpu",
+            )
 
-        if "citrus" in fn_lower or "orange" in fn_lower:
-            if "greening" in fn_lower or "hlb" in fn_lower or yellow_pixels > 0.06:
-                return "citrus_greening"
-            return "citrus_healthy"
+            # Read class information saved during training
+            self.classes = checkpoint["classes"]
+            self.class_to_idx = checkpoint["class_to_idx"]
+            num_classes = checkpoint["num_classes"]
 
-        # Heuristic classification based on pixel statistics
-        if white_powdery_pixels > 0.05:
-            return "cherry_powdery_mildew"
-        elif orange_pixels > 0.04:
-            return "apple_cedar_rust"
-        elif yellow_pixels > 0.08:
-            return "citrus_greening"
-        elif dark_pixels > 0.09:
-            return "apple_scab"
-        elif dark_pixels > 0.04 and red_ratio > 0.4:
-            return "grape_black_rot"
-        elif red_ratio > 0.42:
-            return "strawberry_leaf_scorch"
-        elif green_ratio > 0.52 and dark_pixels < 0.03:
-            # Pick a healthy fruit leaf
-            healthy_options = ["apple_healthy", "grape_healthy", "peach_healthy", "strawberry_healthy"]
-            return healthy_options[hash(filename) % len(healthy_options)]
-        else:
-            return "apple_scab"
+            print(
+                f"[AI Model] Number of classes: "
+                f"{num_classes}"
+            )
 
-    def predict(self, image_bytes: bytes, filename: str = "") -> dict:
-        """
-        Run inference on provided fruit crop leaf image bytes.
-        Returns detailed prediction dictionary.
-        """
-        pil_img, img_array = self.preprocess_image(image_bytes)
+            # ------------------------------------------------
+            # Recreate MobileNetV2
+            # ------------------------------------------------
 
-        if self.is_trained_model_loaded and self.torch_model is not None:
-            import torch
-            # Transform image to PyTorch tensor [1, 3, 224, 224]
-            tensor = torch.from_numpy(img_array).permute(2, 0, 1).unsqueeze(0).float()
-            # Normalize with ImageNet mean/std
-            mean = torch.tensor([0.485, 0.456, 0.406]).view(1, 3, 1, 1)
-            std = torch.tensor([0.229, 0.224, 0.225]).view(1, 3, 1, 1)
-            norm_tensor = (tensor - mean) / std
+            model = models.mobilenet_v2(
+                weights=None
+            )
 
-            with torch.no_grad():
-                outputs = self.torch_model(norm_tensor)
-                probabilities = torch.softmax(outputs, dim=1).squeeze().tolist()
+            # Replace ImageNet classifier with our 25-class head
+            in_features = model.classifier[1].in_features
 
-            top_idx = int(np.argmax(probabilities))
-            predicted_class = CLASS_NAMES[top_idx]
-            confidence = float(probabilities[top_idx] * 100.0)
-        else:
-            predicted_class = self.analyze_visual_features(pil_img, img_array, filename)
-            # Generate a realistic confidence score (88% - 97.5%)
-            seed_val = abs(hash(filename + str(len(image_bytes)))) % 100
-            confidence = 88.0 + (seed_val / 100.0) * 9.5
+            model.classifier[1] = nn.Linear(
+                in_features,
+                num_classes,
+            )
 
-        # Fetch disease record from database
-        disease_info = get_disease_by_id(predicted_class)
+            # Load trained weights
+            model.load_state_dict(
+                checkpoint["state_dict"]
+            )
 
-        # Build top 3 probabilities distribution
-        all_classes_simulated = []
-        for cls in CLASS_NAMES:
-            if cls == predicted_class:
-                prob = confidence
-            else:
-                prob = round((100.0 - confidence) / (len(CLASS_NAMES) - 1), 2)
-            all_classes_simulated.append({
-                "class_id": cls,
-                "display_name": FRUIT_DISEASE_DB.get(cls, {}).get("display_name", cls),
-                "confidence": round(prob, 2)
+            model.eval()
+
+            self.model = model
+            self.is_trained_model_loaded = True
+
+            print(
+                "[AI Model] Successfully loaded "
+                "trained MobileNetV2 model."
+            )
+
+            print("[AI Model] Classes:")
+
+            for index, class_name in enumerate(self.classes):
+                print(
+                    f"  {index}: {class_name}"
+                )
+
+        except Exception as e:
+
+            print(
+                f"[AI Model] Failed to load model: {e}"
+            )
+
+            self.model = None
+            self.is_trained_model_loaded = False
+
+    # ========================================================
+    # PREDICTION
+    # ========================================================
+
+    def predict(
+        self,
+        image_bytes: bytes,
+        filename: str = "",
+    ) -> dict:
+
+        if not self.is_trained_model_loaded:
+
+            raise RuntimeError(
+                "Trained AI model is not loaded."
+            )
+
+        # ----------------------------------------------------
+        # Open uploaded image
+        # ----------------------------------------------------
+
+        image = Image.open(
+            io.BytesIO(image_bytes)
+        ).convert("RGB")
+
+        original_width, original_height = image.size
+
+        # ----------------------------------------------------
+        # Preprocess
+        # ----------------------------------------------------
+
+        tensor = self.transform(image).unsqueeze(0)
+
+        # ----------------------------------------------------
+        # Model inference
+        # ----------------------------------------------------
+
+        with torch.no_grad():
+
+            outputs = self.model(tensor)
+
+            probabilities = torch.softmax(
+                outputs,
+                dim=1,
+            )[0]
+
+        # ----------------------------------------------------
+        # Best prediction
+        # ----------------------------------------------------
+
+        confidence, predicted_index = torch.max(
+            probabilities,
+            dim=0,
+        )
+
+        predicted_index = int(
+            predicted_index.item()
+        )
+
+        confidence = float(
+            confidence.item()
+        )
+
+        predicted_class = self.classes[
+            predicted_index
+        ]
+
+        # ----------------------------------------------------
+        # Top 3 predictions
+        # ----------------------------------------------------
+
+        top_values, top_indices = torch.topk(
+            probabilities,
+            k=min(3, len(self.classes)),
+        )
+
+        top_predictions = []
+
+        for probability, index in zip(
+            top_values.tolist(),
+            top_indices.tolist(),
+        ):
+
+            class_name = self.classes[index]
+
+            disease_id = self.convert_class_to_id(
+                class_name
+            )
+
+            disease_info = get_disease_by_id(
+                disease_id
+            )
+
+            top_predictions.append({
+                "class_name": class_name,
+                "class_id": disease_id,
+                "display_name": disease_info.get(
+                    "display_name",
+                    class_name,
+                ),
+                "confidence": round(
+                    probability * 100,
+                    2,
+                ),
             })
 
-        # Sort by confidence descending
-        all_classes_simulated.sort(key=lambda x: x["confidence"], reverse=True)
+        # ----------------------------------------------------
+        # Main disease information
+        # ----------------------------------------------------
+
+        disease_id = self.convert_class_to_id(
+            predicted_class
+        )
+
+        disease_info = get_disease_by_id(
+            disease_id
+        )
+
+        # ----------------------------------------------------
+        # Final response
+        # ----------------------------------------------------
 
         return {
+
             "prediction": disease_info,
-            "confidence_score": round(confidence, 2),
-            "inference_mode": "PyTorch MobileNetV2" if self.is_trained_model_loaded else "Computer Vision Feature Inspector",
-            "top_probabilities": all_classes_simulated[:3],
+
+            "predicted_class": predicted_class,
+
+            "confidence_score": round(
+                confidence * 100,
+                2,
+            ),
+
+            "inference_mode":
+                "PyTorch MobileNetV2",
+
+            "top_probabilities":
+                top_predictions,
+
             "image_specs": {
-                "dimensions": f"{pil_img.width}x{pil_img.height} px",
-                "processed_size": "224x224 px",
-                "color_mode": pil_img.mode
-            }
+
+                "dimensions":
+                    f"{original_width}x{original_height} px",
+
+                "processed_size":
+                    "224x224 px",
+
+                "color_mode":
+                    image.mode,
+            },
         }
 
-# Global singleton classifier instance
-classifier = FruitCropClassifier()
+    # ========================================================
+    # CLASS NAME → DATABASE ID
+    # ========================================================
+
+    @staticmethod
+    def convert_class_to_id(
+        class_name: str
+    ) -> str:
+
+        mapping = {
+
+            # ---------------- APPLE ----------------
+
+            "Apple___Apple_scab":
+                "apple_scab",
+
+            "Apple___Black_rot":
+                "apple_black_rot",
+
+            "Apple___Cedar_apple_rust":
+                "apple_cedar_rust",
+
+            "Apple___healthy":
+                "apple_healthy",
+
+
+            # ---------------- CORN ----------------
+
+            "Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot":
+                "corn_cercospora_leaf_spot",
+
+            "Corn_(maize)___Common_rust_":
+                "corn_common_rust",
+
+            "Corn_(maize)___Northern_Leaf_Blight":
+                "corn_northern_leaf_blight",
+
+            "Corn_(maize)___healthy":
+                "corn_healthy",
+
+
+            # ---------------- GRAPE ----------------
+
+            "Grape___Black_rot":
+                "grape_black_rot",
+
+            "Grape___Esca_(Black_Measles)":
+                "grape_esca",
+
+            "Grape___Leaf_blight_(Isariopsis_Leaf_Spot)":
+                "grape_leaf_blight",
+
+            "Grape___healthy":
+                "grape_healthy",
+
+
+            # ---------------- POTATO ----------------
+
+            "Potato___Early_blight":
+                "potato_early_blight",
+
+            "Potato___Late_blight":
+                "potato_late_blight",
+
+            "Potato___healthy":
+                "potato_healthy",
+
+
+            # ---------------- TOMATO ----------------
+
+            "Tomato___Bacterial_spot":
+                "tomato_bacterial_spot",
+
+            "Tomato___Early_blight":
+                "tomato_early_blight",
+
+            "Tomato___Late_blight":
+                "tomato_late_blight",
+
+            "Tomato___Leaf_Mold":
+                "tomato_leaf_mold",
+
+            "Tomato___Septoria_leaf_spot":
+                "tomato_septoria_leaf_spot",
+
+            "Tomato___Spider_mites Two-spotted_spider_mite":
+                "tomato_spider_mites",
+
+            "Tomato___Target_Spot":
+                "tomato_target_spot",
+
+            "Tomato___Tomato_Yellow_Leaf_Curl_Virus":
+                "tomato_yellow_leaf_curl_virus",
+
+            "Tomato___Tomato_mosaic_virus":
+                "tomato_mosaic_virus",
+
+            "Tomato___healthy":
+                "tomato_healthy",
+        }
+
+        return mapping.get(
+            class_name,
+            class_name.lower().replace(
+                "___",
+                "_",
+            ),
+        )
+
+
+# ============================================================
+# GLOBAL CLASSIFIER
+# ============================================================
+
+classifier = CropDiseaseClassifier()
+
+
+# main.py imports this
+CLASS_NAMES = classifier.classes
