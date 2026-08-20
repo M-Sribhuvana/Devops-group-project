@@ -9,6 +9,14 @@ import math
 import numpy as np
 from PIL import Image
 from fruit_diseases_db import FRUIT_DISEASE_DB, get_disease_by_id
+MODEL_PATH = os.path.join(
+    os.path.dirname(__file__),
+    "..",
+    "ai_model_training",
+    "checkpoints",
+    "crop_health_mobilenetv2.pth",
+)
+MODEL_PATH = os.path.abspath(MODEL_PATH)
 
 # Target input dimensions for MobileNetV2 model
 TARGET_IMAGE_SIZE = (224, 224)
