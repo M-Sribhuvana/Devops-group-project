@@ -37,3 +37,6 @@ ENV/
 .DS_Store
 Thumbs.db
 *.log
+# AI model training data and artifacts
+ai_model_training/dataset/
+ai_model_training/checkpoints/
