@@ -75,7 +75,7 @@ def domain_expert_fallback(prompt: str, context: dict = None) -> str:
 *Tip: Scout fields weekly during grain-fill stage for early pustule detection.*"""
 
     # 2. Corn Blight / Maize Disease
-    if "corn" in p_lower or "maize" in p_lower or "blight" in p_lower:
+    if "corn" in p_lower or "maize" in p_lower:
         return """### 🌽 Corn / Maize Disease Management
 
 **Common Diseases**: Northern Corn Leaf Blight (*Exserohilum turcicum*), Gray Leaf Spot, Smut.
