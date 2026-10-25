@@ -33,7 +33,6 @@ ENV/
 *.pth
 # AI model training data and artifacts
 ai_model_training/dataset/
-ai_model_training/checkpoints/
 
 # IDE and OS
 .vscode/
