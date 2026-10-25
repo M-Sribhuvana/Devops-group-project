@@ -122,11 +122,7 @@ suggested questions. If it is a follow-up, use the conversation context.
     # Use the existing keyword-based fallback if Gemini is unavailable.
     fallback = domain_expert_fallback(prompt, disease_context)
 
-    return (
-        fallback
-        + "\n\n*Note: The AI service may be unavailable, so this is a "
-          "limited offline response. Try again when the AI service is working.*"
-    )
+    return fallback
 
 
 
