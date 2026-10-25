@@ -11,6 +11,7 @@ build/
 # Environment and sensitive keys
 .env
 *.env
+!.env.example
 backend/.env
 API_KEYS.txt
 *.key
