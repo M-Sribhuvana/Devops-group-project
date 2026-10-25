@@ -129,33 +129,69 @@ suggested questions. If it is a follow-up, use the conversation context.
     )
 
 
+
 def domain_expert_fallback(prompt: str, context: dict = None) -> str:
-    """Provide a limited response when the Gemini API is unavailable."""
+    """Provide useful guidance when Gemini is unavailable."""
 
     p_lower = prompt.lower()
+    name = "the diagnosed plant disease"
+
+    if context and context.get("display_name"):
+        name = context["display_name"]
 
     if any(word in p_lower for word in ("hello", "hi", "hey")):
         return (
-            "Hello! I'm AgriDoctor AI. Ask me about crop diseases, "
-            "plant symptoms, irrigation, soil health, or fertilizers."
+            "Hello! I'm AgriDoctor AI. I can help with plant diseases, "
+            "symptoms, treatment, irrigation, soil health, and fertilizers."
         )
 
-    if context and context.get("display_name") and any(
-        word in p_lower
-        for word in ("treat", "treatment", "cure", "remedy", "manage")
-    ):
-        name = context.get("display_name")
+    if any(word in p_lower for word in ("symptom", "sign", "identify")):
+        return (
+            f"### Symptoms of {name}\n\n"
+            "Check for leaf spots, yellowing, wilting, unusual growth, "
+            "or lesions. Symptoms vary by disease, so compare them with "
+            "the diagnosis shown and monitor whether they spread."
+        )
+
+    if any(word in p_lower for word in ("treat", "treatment", "cure", "remedy", "manage")):
         return (
             f"### Treatment guidance for {name}\n\n"
-            "The AI service is currently unavailable, so I cannot generate "
-            "a personalized treatment plan. Check the diagnosis details, "
-            "remove severely affected plant material when appropriate, "
-            "avoid overhead watering for susceptible diseases, and consult "
-            "your local agricultural extension service for crop-specific treatment."
+            "Remove severely affected plant material when appropriate, "
+            "clean tools, improve airflow, and avoid overhead watering "
+            "if the disease spreads in wet conditions. Use only treatments "
+            "approved for the crop and disease, following the product label "
+            "and local agricultural advice."
+        )
+
+    if any(word in p_lower for word in ("prevent", "prevention", "avoid", "spread")):
+        return (
+            f"### Prevention for {name}\n\n"
+            "Use clean tools and healthy planting material, remove infected "
+            "debris, provide good spacing and airflow, and avoid excess "
+            "moisture on leaves. Follow crop-specific local advice."
+        )
+
+    if any(word in p_lower for word in ("water", "irrigation", "irrigate")):
+        return (
+            "### Irrigation guidance\n\n"
+            "Water near the base of the plant, preferably in the morning. "
+            "Avoid waterlogging and adjust watering to the crop, soil, "
+            "weather, and disease."
+        )
+
+    if any(word in p_lower for word in ("npk", "fertilizer", "fertiliser", "nutrient")):
+        return (
+            "### Fertilizer guidance\n\n"
+            "Choose an NPK ratio based on the crop's growth stage and, "
+            "ideally, a soil test. Avoid excess fertilizer, especially "
+            "nitrogen. There is no single NPK ratio suitable for every crop."
         )
 
     return (
-        "I'm unable to generate a detailed answer because the AI service "
-        "is currently unavailable. Please check your Gemini API key, API "
-        "quota, and backend logs, then try again."
+        f"### Plant care guidance for {name}\n\n"
+        "The live AI service is temporarily unavailable. Check the "
+        "diagnosis and confidence score, monitor symptoms, keep tools clean, "
+        "maintain suitable watering and airflow, and consult a local "
+        "agricultural expert for disease-specific treatment."
+        "\n\n*Offline guidance mode: Gemini is temporarily unavailable.*"
     )
